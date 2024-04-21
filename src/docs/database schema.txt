@@ -1,0 +1,67 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+
+Table users {
+  user_id integer [primary key, increment]
+  name varchar(50) [not null]
+  email varchar(50) [not null]
+  password varchar(20) [not null]
+  role varchar(10) [default: 'user']
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table dishes {
+  dish_id integer [primary key, increment]
+  title varchar(40) [not null]
+  description text(400) [not null]
+  category varchar(15) [default: 'refeição']
+  image_file varchar
+  price float [not null]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table ingredients {
+  ingredient_id integer [primary key, increment]
+  dish_id integer [not null]
+  name varchar(20) [not null]
+}
+
+Table user_favorites {
+  user_id integer [primary key, not null]
+  dish_id integer [not null]
+}
+
+Table user_cart {
+  user_id integer [primary key, not null]
+  dish_id integer [primary key, not null]
+  dish_amount integer [not null]
+}
+
+Table orders {
+  order_id integer [primary key, increment]
+  user_id integer [not null]
+  payment_method varchar(15) [not null]
+  status varchar(20) [default: 'pendente']
+  ordered_at timestamp
+}
+
+Table orders_details {
+  order_detail_id integer [primary key, increment]
+  order_id integer [primary key, not null]
+  dish_id integer [primary key, not null]
+  dish_amount integer [not null]
+  dish_price_paid float [not null]
+}
+
+
+
+Ref: dishes.dish_id <> ingredients.dish_id
+Ref: users.user_id < user_favorites.user_id
+Ref: user_favorites.dish_id > dishes.dish_id
+Ref: users.user_id - user_cart.user_id
+Ref: users.user_id < orders.user_id
+Ref: orders.order_id < orders_details.order_id
+Ref: user_cart.dish_id > dishes.dish_id
+Ref: orders_details.dish_id > dishes.dish_id
