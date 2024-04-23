@@ -1,6 +1,8 @@
 const knex = require("../database/knex");
 const { hash, compare } = require("bcryptjs");
+
 const AppError = require("../utils/AppError");
+
 
 class UsersController {
   async create(request, response) {
@@ -9,7 +11,7 @@ class UsersController {
     const checkUserExists = await knex("users").where('email', email);
 
     if (checkUserExists.length > 0) {
-      throw new AppError("Este e-mail já está associado a outro usuário.");
+      throw new AppError("Este e-mail já está cadastrado.");
     }
 
     const hashedPassword = await hash(password, 8);
@@ -20,27 +22,27 @@ class UsersController {
   }
 
   async update(request, response) {
-    const { name, email, password, old_password } = request.body;
-    const user_id = request.user.user_id;   
-    const user = await knex("users").where('user_id', user_id);    
+    const { name, email, password, old_password } = request.body;    
+    const user_id = request.user.id;             
+    const user = await knex("users").where('user_id', user_id).first();        
         
     if (!user) {
         throw new AppError("Usuário não encontrado.");            
     }
         
-    const userWithUpdatedEmail = await knex("users").where('email', email);
-
-    if (userWithUpdatedEmail && userWithUpdatedEmail.id !== user.user_id) {
+    const userWithUpdatedEmail = await knex("users").where('email', email).first();
+    
+    if (userWithUpdatedEmail && userWithUpdatedEmail.user_id !== user_id) {
         throw new AppError("Este e-mail já está em uso.");
     }
     
     if ((password && !old_password) || (!password && old_password)) {
-        throw new AppError("Você precisa digitar a senha antiga e a nova senha para que ela seja atualizada.")
+        throw new AppError("Você precisa digitar a senha antiga e a nova senha para que ela seja atualizada.");
     }
-
+    
     if (password & old_password) {
-        const checkOldPassword = await compare(old_password.toString(), user.password);
-        const checkSamePasswords = await compare(password.toString(), user.password);
+        const checkOldPassword = await compare(old_password, user.password);
+        const checkSamePasswords = await compare(password, user.password);
 
         if (!checkOldPassword) {
             throw new AppError("A senha antiga não confere.");
