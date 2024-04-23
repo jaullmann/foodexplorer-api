@@ -18,8 +18,9 @@ Table dishes {
   category varchar(15) [default: 'refeição']
   image_file varchar
   price float [not null]
-  created_at timestamp
+  created_at timestamp 
   updated_at timestamp
+  removed_at timestamp [default: null]
 }
 
 Table ingredients {
@@ -57,7 +58,7 @@ Table orders_details {
 
 
 
-Ref: dishes.dish_id <> ingredients.dish_id
+Ref: dishes.dish_id < ingredients.dish_id
 Ref: users.user_id < user_favorites.user_id
 Ref: user_favorites.dish_id > dishes.dish_id
 Ref: users.user_id - user_cart.user_id

@@ -3,7 +3,10 @@ exports.up = knex => knex.schema.createTable("users", t => {
   t.string('name', 50).notNullable();
   t.string('email', 40).notNullable();
   t.string('password', 20).notNullable();
-  t.string('role', 50).default("user");
+
+  t.enum('role', ['admin', 'customer'], { useNative: true, enumName: "roles" })
+    .notNullable().default('customer');
+
   t.timestamp("created_at").default(knex.fn.now());
   t.timestamp("updated_at").default(knex.fn.now());
 });
