@@ -4,13 +4,32 @@ const AppError = require("../utils/AppError");
 
 class DishesController {
     async create(request, response) {
-        const { name, email, password } = request.body;
+        const { title, category, description, ingredients, price } = request.body;
     
-        const checkUserExists = await knex("users").where('email', email);
+        const checDishExists = await knex("dishes").where('title', title).first();
     
-        if (checkUserExists.length > 0) {
-          throw new AppError("Este e-mail já está cadastrado.");
+        if (checDishExists) {
+          throw new AppError("Já existe um prato cadastrado com este nome.");
         }
+
+        const [dish_id] = await knex("dishes").insert({
+          title,
+          category,
+          description, 
+          price
+        })
+
+        if (ingredients.length > 0) {
+          const ingredientsInsert = ingredients.map(ingredient => {
+            return {
+              dish_id,
+              name: ingredient
+            }
+          });
+          await knex("ingredients").insert(ingredientsInsert);
+        }
+        
+        return response.status(201).json();
     }   
 
 
