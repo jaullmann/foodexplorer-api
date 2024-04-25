@@ -6,10 +6,10 @@ class DishesController {
     async create(request, response) {
         const { title, category, description, ingredients, price } = request.body;
     
-        const checDishExists = await knex("dishes").where('title', title).first();
+        const checkDishExists = await knex("dishes").where('title', title).first();
     
-        if (checDishExists) {
-          throw new AppError("Já existe um prato cadastrado com este nome.");
+        if (checkDishExists) {
+          throw new AppError("Já existe outro prato cadastrado com este nome.");
         }
 
         const [dish_id] = await knex("dishes").insert({
@@ -31,8 +31,7 @@ class DishesController {
         
         return response.status(201).json();
     }   
-
-
+    
 }
 
 module.exports = DishesController;
