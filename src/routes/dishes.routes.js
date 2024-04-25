@@ -1,15 +1,12 @@
 const { Router } = require("express");
-const DishesContromdjava -version
-ller = require("../controllers/DishesController");
-const UsersValidatedController = require("../controllers/UsersValidatedController");
+const DishesController = require("../controllers/DishesController");
+const ensureAuthenticated = require("../middlewares/ensureAuthenticated");
 
-const usersRoutes = Router();
+const dishesRoutes = Router();
 
-const usersController = new UsersController();
-const usersValidatedController = new UsersValidatedController();
+const dishesController = new DishesController();
 
-usersRoutes.post("/", usersController.create);
-usersRoutes.put("/", usersController.update);
-usersRoutes.get("/validated", usersValidatedController.index);
+dishesRoutes.post("/", ensureAuthenticated, dishesController.create);
+// dishesRoutes.put("/", ensureAuthenticated, dishesController.update);
 
-module.exports = usersRoutes;
+module.exports = dishesRoutes;
