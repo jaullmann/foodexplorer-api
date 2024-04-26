@@ -6,7 +6,12 @@ const dishesRoutes = Router();
 
 const dishesController = new DishesController();
 
-dishesRoutes.post("/", ensureAuthenticated, dishesController.create);
-// dishesRoutes.put("/", ensureAuthenticated, dishesController.update);
+dishesRoutes.use(ensureAuthenticated);
+
+dishesRoutes.get("/", dishesController.index);
+dishesRoutes.post("/", dishesController.create);
+dishesRoutes.get("/:dish_id", dishesController.show);
+dishesRoutes.put("/:dish_id", dishesController.update);
+dishesRoutes.delete("/:dish_id", dishesController.delete);
 
 module.exports = dishesRoutes;
