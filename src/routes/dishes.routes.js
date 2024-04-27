@@ -6,7 +6,7 @@ const dishesRoutes = Router();
 
 const dishesController = new DishesController();
 
-dishesRoutes.use(ensureAuthenticated);
+// dishesRoutes.use(ensureAuthenticated);
 
 dishesRoutes.get("/", dishesController.index);
 dishesRoutes.post("/", dishesController.create);

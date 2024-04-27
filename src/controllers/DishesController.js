@@ -35,7 +35,11 @@ class DishesController {
     async show(request, response) {
       const { dish_id } = request.params;
       const dish = await knex("dishes").where("dish_id", dish_id).first();
-      const ingredients = await knex("ingredients").where("dish_id", dish_id).orderBy("name");
+      const ingredients = await knex("ingredients")
+        .select("name")
+        .where({"dish_id": dish_id})
+        .orderBy("name")
+        .pluck("name");
       
       return response.status(201).json({
         ...dish,
@@ -44,22 +48,47 @@ class DishesController {
     }
 
     async index(request, response) {
-      const { title, ingredients } = request.query;
+      const { searchKey } = request.query;
 
+      const distinctDishes = await knex("dishes")
+        .distinct("dishes.*")
+        .innerJoin("ingredients", "dishes.dish_id", "ingredients.dish_id")
+        .where(
+          builder => {
+            builder.whereLike("dishes.title", `%${searchKey}%`)
+              .orWhereLike("dishes.description", `%${searchKey}%`)
+              .orWhereLike("ingredients.name", `%${searchKey}%`);
+          })
+        .orderBy("dishes.title")
+        .groupBy("dishes.dish_id") 
+        .select("dishes.*");   
       
+      const dishesWithIngredients = await Promise.all(distinctDishes.map(async dish => {
+        const ingredients = await knex("ingredients")
+          .select("name")
+          .where("dish_id", dish.dish_id)
+          .pluck("name"); 
+        
+        return { ...dish, ingredients };
+        })        
+      );
+     
+      return response.status(201).json(dishesWithIngredients);
     }
        
     async update(request, response) {
       const { title, category, description, ingredients, price } = request.body;
       const { dish_id } = request.params;
-      const datetime = new Date();
+      // const datetime = new Date();
       
-      await knex("dishes").where("dish_id", dish_id).update({
-        title, 
-        category, 
-        description, 
-        price,
-        updated_at: datetime
+      await knex("dishes")
+        .where("dish_id", dish_id)
+        .update({
+          title, 
+          category, 
+          description, 
+          price,
+          updated_at: knex.fn.now()
       });
 
       await knex("ingredients").where("dish_id", dish_id).delete();
