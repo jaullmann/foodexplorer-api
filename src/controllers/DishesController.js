@@ -3,6 +3,7 @@ const AppError = require("../utils/AppError");
 
 
 class DishesController {
+
     async create(request, response) {
         const { title, category, description, ingredients, price } = request.body;
     
@@ -12,7 +13,7 @@ class DishesController {
           throw new AppError("Já existe outro prato registrado com este nome.");
         }
 
-        const [dish_id] = await knex("dishes").insert({
+        const [ dish_id ] = await knex("dishes").insert({
           title,
           category,
           description, 
@@ -48,17 +49,18 @@ class DishesController {
     }
 
     async index(request, response) {
-      const { searchKey } = request.query;
+      const { search_key } = request.query;
 
       const distinctDishes = await knex("dishes")
         .distinct("dishes.*")
         .innerJoin("ingredients", "dishes.dish_id", "ingredients.dish_id")
         .where(
           builder => {
-            builder.whereLike("dishes.title", `%${searchKey}%`)
-              .orWhereLike("dishes.description", `%${searchKey}%`)
-              .orWhereLike("ingredients.name", `%${searchKey}%`);
+            builder.whereLike("dishes.title", `%${search_key}%`)
+              .orWhereLike("dishes.description", `%${search_key}%`)
+              .orWhereLike("ingredients.name", `%${search_key}%`)                            
           })
+        .whereNull("dishes.removed_at")
         .orderBy("dishes.title")
         .groupBy("dishes.dish_id") 
         .select("dishes.*");   
@@ -78,8 +80,7 @@ class DishesController {
        
     async update(request, response) {
       const { title, category, description, ingredients, price } = request.body;
-      const { dish_id } = request.params;
-      // const datetime = new Date();
+      const { dish_id } = request.params;      
       
       await knex("dishes")
         .where("dish_id", dish_id)
@@ -112,8 +113,8 @@ class DishesController {
       await knex("dishes").where("dish_id", dish_id).delete();
 
       return response.status(201).json();
-    }
-    
+    }    
+
 }
 
 module.exports = DishesController;
