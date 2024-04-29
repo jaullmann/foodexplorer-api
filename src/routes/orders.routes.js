@@ -10,8 +10,8 @@ const ordersController = new OrdersController();
 
 // ordersRoutes.get("/", ordersController.index);
 ordersRoutes.post("/:user_id", ordersController.create);
-// ordersRoutes.get("/:dish_id", ordersController.show);
-// ordersRoutes.put("/:dish_id", ordersController.update);
+ordersRoutes.get("/:order_id", ordersController.show);
+ordersRoutes.put("/:order_id", ordersController.update);
 // ordersRoutes.delete("/:dish_id", ordersController.delete);
 
 module.exports = ordersRoutes;

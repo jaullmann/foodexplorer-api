@@ -8,6 +8,7 @@ exports.up = knex => knex.schema.createTable("orders", t => {
   t.enum('status', ['pendente', 'preparando', 'entregue', 'cancelado'], { useNative: true, enumName: "status" })
   .notNullable().default('pendente');
   t.timestamp("ordered_at").default(knex.fn.now());
+  t.timestamp("updated_at").default(knex.fn.now());
 });
 
 exports.down = knex => knex.schema.dropTable("orders");
