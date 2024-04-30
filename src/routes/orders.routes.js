@@ -8,10 +8,10 @@ const ordersController = new OrdersController();
 
 // ordersRoutes.use(ensureAuthenticated);
 
-// ordersRoutes.get("/", ordersController.index);
+ordersRoutes.get("/", ordersController.index);
 ordersRoutes.post("/:user_id", ordersController.create);
 ordersRoutes.get("/:order_id", ordersController.show);
 ordersRoutes.put("/:order_id", ordersController.update);
-// ordersRoutes.delete("/:dish_id", ordersController.delete);
+ordersRoutes.delete("/:order_id", ordersController.delete);
 
 module.exports = ordersRoutes;

@@ -59,8 +59,9 @@ class DishesController {
             builder.whereLike("dishes.title", `%${search_key}%`)
               .orWhereLike("dishes.description", `%${search_key}%`)
               .orWhereLike("ingredients.name", `%${search_key}%`)                            
-          })
-        .whereNull("dishes.removed_at")
+            }
+          )
+        .whereNull("dishes.removed_at")   // filter removed (deleted) dishes that are no longer available
         .orderBy("dishes.title")
         .groupBy("dishes.dish_id") 
         .select("dishes.*");   
@@ -109,8 +110,21 @@ class DishesController {
     }    
 
     async delete(request, response) {
-      const { dish_id } = request.params;      
-      await knex("dishes").where("dish_id", dish_id).delete();
+      const { dish_id } = request.params;  
+      
+      const ordersWithDish = await knex("orders_details").where("dish_id", dish_id).first();      
+
+
+      // check if there is any previous order with the target dish; in this case, the dish is not deleted to preserve the correct
+      // detail from its linked orders
+      if (ordersWithDish) {
+        await knex("dishes")
+          .where("dish_id", dish_id)
+          .update({ removed_at: knex.fn.now() });
+      } else {
+        // if the dish has never been sold, the delete procedure is fully performed
+        await knex("dishes").where("dish_id", dish_id).delete();
+      }     
 
       return response.status(201).json();
     }    

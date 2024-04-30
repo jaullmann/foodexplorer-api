@@ -44,6 +44,26 @@ class OrdersController {
     })
   }
 
+  async index(request, response) {
+    const { user_id, payment_method, status } = request.query;
+
+    if (user_id | payment_method | status) {
+      const orders = await knex("orders")
+        .where(
+            builder => {
+              builder.orWhere("user_id", `${user_id}`)
+              .orWhere("payment_method", `${payment_method}`)
+              .orWhere("status", `${status}`)
+            }
+          )
+        .orderBy('ordered_at');
+    } else {
+      const orders = await knex("orders").orderBy('ordered_at');
+    }    
+      
+    return response.status(201).json(orders);
+  }
+
   async update(request, response) {
     const { payment_method, ordered_dishes } = request.body;
     const { order_id } = request.params;
@@ -70,6 +90,13 @@ class OrdersController {
       await knex("orders_details").insert(orderDetailsInsert);
     }
      
+    return response.status(201).json();
+  }
+
+  async delete(request, response) {    
+    const { order_id } = request.params;
+    await knex("orders").where("order_id", order_id).delete();
+
     return response.status(201).json();
   }
 
