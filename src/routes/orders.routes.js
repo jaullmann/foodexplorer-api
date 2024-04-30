@@ -6,10 +6,10 @@ const ordersRoutes = Router();
 
 const ordersController = new OrdersController();
 
-// ordersRoutes.use(ensureAuthenticated);
+ordersRoutes.use(ensureAuthenticated);
 
 ordersRoutes.get("/", ordersController.index);
-ordersRoutes.post("/:user_id", ordersController.create);
+ordersRoutes.post("/", ordersController.create);
 ordersRoutes.get("/:order_id", ordersController.show);
 ordersRoutes.put("/:order_id", ordersController.update);
 ordersRoutes.delete("/:order_id", ordersController.delete);

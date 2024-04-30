@@ -2,7 +2,7 @@ const knex = require("../database/knex");
 const AppError = require("../utils/AppError");
 
 
-class DishesController {
+class UserFavoritesController {
 
     async create(request, response) {
         const { title, category, description, ingredients, price } = request.body;
@@ -131,4 +131,4 @@ class DishesController {
 
 }
 
-module.exports = DishesController;
+module.exports = UserFavoritesController;

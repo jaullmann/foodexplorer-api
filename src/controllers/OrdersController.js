@@ -5,8 +5,7 @@ const AppError = require("../utils/AppError");
 class OrdersController {
 
   async create(request, response) {
-    const { payment_method, ordered_dishes } = request.body;
-    const { user_id } = request.params;
+    const { user_id, payment_method, ordered_dishes } = request.body;    
 
     const [ order_id ] = await knex("orders").insert({
       user_id,
@@ -31,9 +30,7 @@ class OrdersController {
     const { order_id } = request.params;
     const order = await knex("orders").where("order_id", order_id).first();    
     const orderDetails = await knex("orders_details as od")
-      .select(
-          "od.dish_id", 
-          "ds.title", "od.dish_amount", "od.dish_price_paid")     
+      .select("od.dish_id", "ds.title", "od.dish_amount", "od.dish_price_paid")     
       .innerJoin("dishes as ds", "od.dish_id", "ds.dish_id") 
       .where("od.order_id", order_id)
       .orderBy("ds.title")
@@ -45,23 +42,39 @@ class OrdersController {
   }
 
   async index(request, response) {
-    const { user_id, payment_method, status } = request.query;
+    const { user_id, role } = request.body;
+    let orders = null
+    let ordersDetails = null
 
-    if (user_id | payment_method | status) {
-      const orders = await knex("orders")
-        .where(
-            builder => {
-              builder.orWhere("user_id", `${user_id}`)
-              .orWhere("payment_method", `${payment_method}`)
-              .orWhere("status", `${status}`)
-            }
-          )
-        .orderBy('ordered_at');
+    if (role==="customer") {
+      orders = await knex("orders")
+        .where("user_id", `${user_id}`)
+        .orderBy('order_id');
+
+      ordersDetails = await knex("orders_details as od")
+        .select("od.order_id", "od.dish_id", "ds.title", "od.dish_amount", "od.dish_price_paid")  
+        .innerJoin("orders as or", "od.order_id", "or.order_id")
+        .innerJoin("dishes as ds", "od.dish_id", "ds.dish_id")
+        .where("or.user_id", user_id)
+        .orderBy("od.order_id")
     } else {
-      const orders = await knex("orders").orderBy('ordered_at');
-    }    
+      orders = await knex("orders").orderBy('order_id');
       
-    return response.status(201).json(orders);
+      ordersDetails = await knex("orders_details as od")
+        .select("od.order_id", "od.dish_id", "ds.title", "od.dish_amount", "od.dish_price_paid")  
+        .innerJoin("dishes as ds", "od.dish_id", "ds.dish_id")
+        .orderBy("od.order_id")
+    } 
+
+    const ordersWithDetails = orders.map(order => {
+      const orderDetails = ordersDetails.filter(details => details.order_id === order.order_id);
+      return {
+        ...order,
+        details: orderDetails
+      }
+    })
+      
+    return response.status(201).json(ordersWithDetails);
   }
 
   async update(request, response) {
