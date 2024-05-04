@@ -51,20 +51,20 @@ class DishesController {
     async index(request, response) {
       const { search_key } = request.query;
 
-      const distinctDishes = await knex("dishes")
-        .distinct("dishes.*")
-        .innerJoin("ingredients", "dishes.dish_id", "ingredients.dish_id")
+      const distinctDishes = await knex("dishes as ds")
+        .distinct("ds.*")
+        .innerJoin("ingredients as ig", "ds.dish_id", "ig.dish_id")
         .where(
           builder => {
-            builder.whereLike("dishes.title", `%${search_key}%`)
-              .orWhereLike("dishes.description", `%${search_key}%`)
-              .orWhereLike("ingredients.name", `%${search_key}%`)                            
+            builder.whereLike("ds.title", `%${search_key}%`)
+              .orWhereLike("ds.description", `%${search_key}%`)
+              .orWhereLike("ig.name", `%${search_key}%`)                            
             }
           )
-        .whereNull("dishes.removed_at")   // filter removed (deleted) dishes that are no longer available
-        .orderBy("dishes.title")
-        .groupBy("dishes.dish_id") 
-        .select("dishes.*");   
+        .whereNull("ds.removed_at")   // filter removed (deleted) dishes that are no longer available
+        .orderBy("ds.title")
+        .groupBy("ds.dish_id") 
+        .select("ds.*");   
       
       const dishesWithIngredients = await Promise.all(distinctDishes.map(async dish => {
         const ingredients = await knex("ingredients")

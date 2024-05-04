@@ -5,78 +5,45 @@ const AppError = require("../utils/AppError");
 class UserFavoritesController {
 
     async create(request, response) {
-        const { title, category, description, ingredients, price } = request.body;
-    
-        const checkDishExists = await knex("dishes").where('title', title).first();
-    
-        if (checkDishExists) {
-          throw new AppError("Já existe outro prato registrado com este nome.");
-        }
+        const { user_id, dish_id } = request.body;
 
-        const [ dish_id ] = await knex("dishes").insert({
-          title,
-          category,
-          description, 
-          price
-        })
+        try {
+          await knex("user_favorites").insert({
+            user_id,
+            dish_id          
+          });                  
+          
+        } catch (e) {
+          if (e.code === 'SQLITE_CONSTRAINT') {
+            console.error('UNIQUE constraint violation, create request ignored');
+          } else {
+            throw new AppError(e.message)
+          }
+        }        
 
-        if (ingredients.length > 0) {
-          const ingredientsInsert = ingredients.map(ingredient => {
-            return {
-              dish_id,
-              name: ingredient
-            }
-          });
-          await knex("ingredients").insert(ingredientsInsert);
-        }
-        
         return response.status(201).json();
     } 
 
-    async show(request, response) {
-      const { dish_id } = request.params;
-      const dish = await knex("dishes").where("dish_id", dish_id).first();
-      const ingredients = await knex("ingredients")
-        .select("name")
-        .where({"dish_id": dish_id})
-        .orderBy("name")
-        .pluck("name");
-      
-      return response.status(201).json({
-        ...dish,
-        ingredients
-      });
-    }
-
     async index(request, response) {
-      const { search_key } = request.query;
-
-      const distinctDishes = await knex("dishes")
-        .distinct("dishes.*")
-        .innerJoin("ingredients", "dishes.dish_id", "ingredients.dish_id")
-        .where(
-          builder => {
-            builder.whereLike("dishes.title", `%${search_key}%`)
-              .orWhereLike("dishes.description", `%${search_key}%`)
-              .orWhereLike("ingredients.name", `%${search_key}%`)                            
-            }
-          )
-        .whereNull("dishes.removed_at")   // filter removed (deleted) dishes that are no longer available
-        .orderBy("dishes.title")
-        .groupBy("dishes.dish_id") 
-        .select("dishes.*");   
+      const { user_id, role } = request.body;
       
-      const dishesWithIngredients = await Promise.all(distinctDishes.map(async dish => {
-        const ingredients = await knex("ingredients")
-          .select("name")
-          .where("dish_id", dish.dish_id)
-          .pluck("name"); 
-        
-        return { ...dish, ingredients };
-        })        
-      );
-     
-      return response.status(201).json(dishesWithIngredients);
+      let userFavoritesQuery = knex("user_favorites as uf")
+        .select("uf.user_id", "uf.dish_id", "ds.title", "ds.category", "ds.image_file")
+        .innerJoin("dishes as ds", "uf.dish_id", "ds.dish_id")
+
+      if (role === 'customer') {
+        userFavoritesQuery = userFavoritesQuery
+          .where("uf.user_id", user_id)
+          .orderBy("ds.title")
+      } else {
+        userFavoritesQuery = userFavoritesQuery
+        .where("uf.user_id", ">", "0")
+        .orderBy("uf.user_id", "ds.title")
+      }
+
+      const userFavorites = await userFavoritesQuery
+
+      return response.status(201).json(userFavorites);
     }
        
     async update(request, response) {
