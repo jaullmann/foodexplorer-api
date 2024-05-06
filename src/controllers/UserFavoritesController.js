@@ -17,7 +17,7 @@ class UserFavoritesController {
           if (e.code === 'SQLITE_CONSTRAINT') {
             console.error('UNIQUE constraint violation, create request ignored');
           } else {
-            throw new AppError(e.message)
+            throw new AppError(e.message);
           }
         }        
 
@@ -29,69 +29,49 @@ class UserFavoritesController {
       
       let userFavoritesQuery = knex("user_favorites as uf")
         .select("uf.user_id", "uf.dish_id", "ds.title", "ds.category", "ds.image_file")
-        .innerJoin("dishes as ds", "uf.dish_id", "ds.dish_id")
+        .innerJoin("dishes as ds", "uf.dish_id", "ds.dish_id");
 
       if (role === 'customer') {
         userFavoritesQuery = userFavoritesQuery
           .where("uf.user_id", user_id)
-          .orderBy("ds.title")
+          .orderBy("ds.title");
       } else {
         userFavoritesQuery = userFavoritesQuery
         .where("uf.user_id", ">", "0")
-        .orderBy("uf.user_id", "ds.title")
+        .orderBy("uf.user_id", "ds.title");
       }
 
-      const userFavorites = await userFavoritesQuery
+      const userFavorites = await userFavoritesQuery;
 
       return response.status(201).json(userFavorites);
     }
        
     async update(request, response) {
-      const { title, category, description, ingredients, price } = request.body;
-      const { dish_id } = request.params;      
-      
-      await knex("dishes")
-        .where("dish_id", dish_id)
-        .update({
-          title, 
-          category, 
-          description, 
-          price,
-          updated_at: knex.fn.now()
-      });
+      const { user_id, dishes_id } = request.body;
 
-      await knex("ingredients").where("dish_id", dish_id).delete();
+      await knex("user_favorites").where("user_id", user_id).delete();
 
-      if (ingredients) {
-        const ingredientsInsert = ingredients.map(ingredient => {
+      if (dishes_id) {
+        const dishesInsert = dishes_id.map(dish => {
           return {
-            dish_id: dish_id,
-            name: ingredient
+            user_id: user_id,
+            dish_id: dish
           }
-        });
+        })
 
-        await knex("ingredients").insert(ingredientsInsert);
+        await knex("user_favorites").insert(dishesInsert);
       }
 
       return response.status(201).json();
     }    
 
     async delete(request, response) {
-      const { dish_id } = request.params;  
+      const { user_id, dish_id } = request.body;  
       
-      const ordersWithDish = await knex("orders_details").where("dish_id", dish_id).first();      
-
-
-      // check if there is any previous order with the target dish; in this case, the dish is not deleted to preserve the correct
-      // detail from its linked orders
-      if (ordersWithDish) {
-        await knex("dishes")
-          .where("dish_id", dish_id)
-          .update({ removed_at: knex.fn.now() });
-      } else {
-        // if the dish has never been sold, then the delete procedure is performed
-        await knex("dishes").where("dish_id", dish_id).delete();
-      }     
+      await knex("user_favorites")
+        .where("user_id", user_id)
+        .andWhere("dish_id", dish_id)
+        .delete();
 
       return response.status(201).json();
     }    
