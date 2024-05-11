@@ -4,11 +4,13 @@ const cors = require("cors");
 const express = require("express");
 const routes = require("./routes");
 const cookieParser = require("cookie-parser");
+const uploadConfig = require("./configs/upload");
 
 const AppError = require("./utils/AppError");
 
 const app = express();
 app.use(express.json());
+app.use("/files", express.static(uploadConfig.UPLOADS_FOLDER));
 app.use(cookieParser());
 app.use(cors({       
   origin: ["http://localhost:5173", "http://127.0.0.1:5173/"],

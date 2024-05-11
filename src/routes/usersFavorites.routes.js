@@ -6,7 +6,7 @@ const usersFavoritesRoutes = Router();
 
 const userFavoritesController = new UserFavoritesController();
 
-// userFavoritesRoutes.use(ensureAuthenticated);
+usersFavoritesRoutes.use(ensureAuthenticated);
 
 usersFavoritesRoutes.get("/", userFavoritesController.index);
 usersFavoritesRoutes.post("/", userFavoritesController.create);

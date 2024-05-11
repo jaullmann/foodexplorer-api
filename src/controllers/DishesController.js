@@ -6,6 +6,11 @@ class DishesController {
 
     async create(request, response) {
         const { title, category, description, ingredients, price } = request.body;
+        const { role } = request.user;
+
+        if (role !== 'admin') {
+          throw new AppError("Unauthorized", 401);
+        }
     
         const checkDishExists = await knex("dishes").where('title', title).first();
     
@@ -81,7 +86,12 @@ class DishesController {
        
     async update(request, response) {
       const { title, category, description, ingredients, price } = request.body;
-      const { dish_id } = request.params;      
+      const { dish_id } = request.params;
+      const { role } = request.user;
+
+      if (role !== 'admin') {
+        throw new AppError("Unauthorized", 401);
+      }     
       
       await knex("dishes")
         .where("dish_id", dish_id)
@@ -110,10 +120,14 @@ class DishesController {
     }    
 
     async delete(request, response) {
-      const { dish_id } = request.params;  
-      
-      const ordersWithDish = await knex("orders_details").where("dish_id", dish_id).first();      
+      const { dish_id } = request.params;
+      const { role } = request.user;
 
+      if (role !== 'admin') {
+        throw new AppError("Unauthorized", 401);
+      }  
+      
+      const ordersWithDish = await knex("orders_details").where("dish_id", dish_id).first();     
 
       // check if there is any previous order with the target dish; in this case, the dish is not deleted to preserve the correct
       // detail from its linked orders

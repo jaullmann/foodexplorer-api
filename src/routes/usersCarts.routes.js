@@ -6,7 +6,7 @@ const usersCartsRoutes = Router();
 
 const usersCartsController = new UsersCartsController();
 
-// userFavoritesRoutes.use(ensureAuthenticated);
+usersCartsRoutes.use(ensureAuthenticated);
 
 usersCartsRoutes.get("/", usersCartsController.index);
 usersCartsRoutes.post("/", usersCartsController.create);

@@ -5,7 +5,8 @@ const AppError = require("../utils/AppError");
 class UsersFavoritesController {
 
     async create(request, response) {
-        const { user_id, dish_id } = request.body;
+        const { dish_id } = request.body;
+        const user_id = request.user.id; 
 
         try {
           await knex("users_favorites").insert({
@@ -25,7 +26,7 @@ class UsersFavoritesController {
     } 
 
     async index(request, response) {
-      const { user_id, role } = request.body;
+      const { id, role } = request.user;
       
       let usersFavoritesQuery = knex("users_favorites as uf")
         .select("uf.user_id", "uf.dish_id", "ds.title", "ds.category", "ds.image_file")
@@ -33,7 +34,7 @@ class UsersFavoritesController {
 
       if (role === 'customer') {
         usersFavoritesQuery = usersFavoritesQuery
-          .where("uf.user_id", user_id)
+          .where("uf.user_id", id)
           .orderBy("ds.title");
       } else {
         usersFavoritesQuery = usersFavoritesQuery
@@ -47,7 +48,8 @@ class UsersFavoritesController {
     }
        
     async update(request, response) {
-      const { user_id, dishes_id } = request.body;
+      const { dishes_id } = request.body;
+      const user_id = request.user.id; 
 
       await knex("users_favorites").where("user_id", user_id).delete();
 

@@ -5,7 +5,8 @@ const AppError = require("../utils/AppError");
 class OrdersController {
 
   async create(request, response) {
-    const { user_id, payment_method, ordered_dishes } = request.body;    
+    const { payment_method, ordered_dishes } = request.body; 
+    const user_id = request.user.id; 
 
     const [ order_id ] = await knex("orders").insert({
       user_id,
@@ -42,11 +43,12 @@ class OrdersController {
   }
 
   async index(request, response) {
-    const { user_id, role } = request.body;
+    const user_id = request.user.id; 
+    const role = request.user.role; 
     let orders = null
     let ordersDetails = null
 
-    if (role==="customer") {
+    if (role === "customer") {
       orders = await knex("orders")
         .where("user_id", `${user_id}`)
         .orderBy('order_id');
@@ -80,6 +82,11 @@ class OrdersController {
   async update(request, response) {
     const { payment_method, ordered_dishes } = request.body;
     const { order_id } = request.params;
+    const { role } = request.user;
+
+    if (role !== 'admin') {
+      throw new AppError("Unauthorized", 401);
+    }
 
     await knex("orders")
       .where("order_id", order_id)
@@ -108,6 +115,12 @@ class OrdersController {
 
   async delete(request, response) {    
     const { order_id } = request.params;
+    const { role } = request.user;
+
+    if (role !== 'admin') {
+      throw new AppError("Unauthorized", 401);
+    }
+
     await knex("orders").where("order_id", order_id).delete();
 
     return response.status(201).json();
