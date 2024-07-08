@@ -8,7 +8,7 @@ const userFavoritesController = new UserFavoritesController();
 
 usersFavoritesRoutes.use(ensureAuthenticated);
 
-usersFavoritesRoutes.get("/", userFavoritesController.index);
+usersFavoritesRoutes.get("/", userFavoritesController.show);
 usersFavoritesRoutes.post("/", userFavoritesController.create);
 usersFavoritesRoutes.put("/", userFavoritesController.update);
 usersFavoritesRoutes.delete("/", userFavoritesController.delete);

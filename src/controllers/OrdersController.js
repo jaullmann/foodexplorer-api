@@ -27,13 +27,35 @@ class OrdersController {
     return response.status(201).json();
   }
 
-  async show(request, response) {
-    const { order_id } = request.params;
-    const order = await knex("orders").where("order_id", order_id).first();    
+  async show(request, response) {    
+    const user_id = request.user.id;  
+    const role = request.user.role
+    const { order_id } = request.params; 
+    let order = null; 
+    
+    if (role === "admin") {
+      order = await knex("orders")              
+        .where("order_id", order_id)
+        .first()
+        
+      if (!order) {
+        return response.status(201).json()
+      }
+    } else {
+      order = await knex("orders")      
+        .where("user_id", user_id)      
+        .andWhere("order_id", order_id)  
+        .first()
+
+      if (!order)  {
+        throw new AppError("Unauthorized", 401);
+      }
+    } 
+
     const orderDetails = await knex("orders_details as od")
       .select("od.dish_id", "ds.title", "od.dish_amount", "od.dish_price_paid")     
       .innerJoin("dishes as ds", "od.dish_id", "ds.dish_id") 
-      .where("od.order_id", order_id)
+      .where("od.order_id", order_id)       
       .orderBy("ds.title")
 
     return response.status(201).json({
@@ -45,8 +67,8 @@ class OrdersController {
   async index(request, response) {
     const user_id = request.user.id; 
     const role = request.user.role; 
-    let orders = null
-    let ordersDetails = null
+    let orders = null;
+    let ordersDetails = null;
 
     if (role === "customer") {
       orders = await knex("orders")
@@ -58,14 +80,14 @@ class OrdersController {
         .innerJoin("orders as or", "od.order_id", "or.order_id")
         .innerJoin("dishes as ds", "od.dish_id", "ds.dish_id")
         .where("or.user_id", user_id)
-        .orderBy("od.order_id")
+        .orderBy("od.order_id");
     } else {
       orders = await knex("orders").orderBy('order_id');
       
       ordersDetails = await knex("orders_details as od")
         .select("od.order_id", "od.dish_id", "ds.title", "od.dish_amount", "od.dish_price_paid")  
         .innerJoin("dishes as ds", "od.dish_id", "ds.dish_id")
-        .orderBy("od.order_id")
+        .orderBy("od.order_id");
     } 
 
     const ordersWithDetails = orders.map(order => {

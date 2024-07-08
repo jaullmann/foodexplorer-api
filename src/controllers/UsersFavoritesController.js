@@ -25,24 +25,14 @@ class UsersFavoritesController {
         return response.status(201).json();
     } 
 
-    async index(request, response) {
-      const { id, role } = request.user;
+    async show(request, response) {
+      const user_id = request.user.id; 
       
-      let usersFavoritesQuery = knex("users_favorites as uf")
+      const usersFavorites = await knex("users_favorites as uf")
         .select("uf.user_id", "uf.dish_id", "ds.title", "ds.category", "ds.image_file")
-        .innerJoin("dishes as ds", "uf.dish_id", "ds.dish_id");
-
-      if (role === 'customer') {
-        usersFavoritesQuery = usersFavoritesQuery
-          .where("uf.user_id", id)
-          .orderBy("ds.title");
-      } else {
-        usersFavoritesQuery = usersFavoritesQuery
-        .where("uf.user_id", ">", "0")
-        .orderBy("uf.user_id", "ds.title");
-      }
-
-      const usersFavorites = await usersFavoritesQuery;
+        .innerJoin("dishes as ds", "uf.dish_id", "ds.dish_id")
+        .where("uf.user_id", user_id)
+        .orderBy("ds.title");  
 
       return response.status(201).json(usersFavorites);
     }
