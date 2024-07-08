@@ -7,6 +7,7 @@ const cookieParser = require("cookie-parser");
 const uploadConfig = require("./configs/upload");
 
 const AppError = require("./utils/AppError");
+const ensureAuthenticated = require("./middlewares/ensureAuthenticated");
 
 const app = express();
 app.use(express.json());
