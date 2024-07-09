@@ -2,7 +2,7 @@ exports.up = knex => knex.schema.createTable("orders", t => {
   t.increments("order_id");
   t.integer('user_id').notNullable();
   
-  t.enum('payment_method', ['credito', 'pix'], { useNative: true, enumName: "payment_methods" })
+  t.enum('payment_method', ['pix', 'credito', 'debito'], { useNative: true, enumName: "payment_methods" })
     .notNullable().default('crédito');
 
   t.enum('status', ['pendente', 'preparando', 'entregue', 'cancelado'], { useNative: true, enumName: "status" })
