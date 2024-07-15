@@ -8,6 +8,14 @@ class UsersController {
   async create(request, response) {
     const { name, email, password } = request.body;
 
+    const checkFirstUser = await knex("users");
+    
+    // by default, the very first user will be created as administrator
+    if (checkFirstUser.length === 0) {
+      await knex("users").insert({ name, email, password: hashedPassword, role: "admin" });
+      return response.status(201).json();
+    }
+
     const checkUserExists = await knex("users").where('email', email);
 
     if (checkUserExists.length > 0) {

@@ -3,8 +3,8 @@ exports.up = knex => knex.schema.createTable("dishes", t => {
   t.string('title', 40).notNullable();
   t.text('description', 300).notNullable();
 
-  t.enum('category', ['refeição', 'lanche', 'sobremesa'], { useNative: true, enumName: "categories" })
-    .notNullable().default('refeição');
+  t.enum('category', ['refeicao', 'lanche', 'bebida', 'sobremesa'], { useNative: true, enumName: "categories" })
+    .notNullable().default('refeicao');
 
   t.string('image_file');
   t.float('price', precision=2).notNullable();

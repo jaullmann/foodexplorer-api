@@ -33,23 +33,25 @@ class UsersCartsController {
     async index(request, response) {
       const { id, role } = request.user;
       
-      let usersCartsQuery = knex("users_carts as uc")
-        .select("uc.user_id", "uc.dish_id", "uc.dish_amount", "ds.title", "ds.category", "ds.image_file")
+      let usersCartQuery = knex("users_carts as uc")
+        .select("uc.user_id", "uc.dish_id", "uc.dish_amount", "ds.title", "ds.category", "ds.price as dish_price", "ds.image_file")
         .innerJoin("dishes as ds", "uc.dish_id", "ds.dish_id");
 
       if (role === 'customer') {
-        usersCartsQuery = usersCartsQuery
+        usersCartQuery = usersCartQuery
           .where("uc.user_id", id)
           .orderBy("ds.title");
       } else {
-        usersCartsQuery = usersCartsQuery
+        usersCartQuery = usersCartQuery
         .where("uc.user_id", ">", "0")
         .orderBy("uc.user_id", "ds.title");
       }
 
-      const usersCarts = await usersCartsQuery;
+      const usersCart = await usersCartQuery;
 
-      return response.status(201).json(usersCarts);
+      console.log(usersCart);
+
+      return response.status(201).json(usersCart);
     }
        
     async update(request, response) {

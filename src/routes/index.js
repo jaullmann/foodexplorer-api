@@ -12,7 +12,7 @@ const routes = Router();
 routes.use("/sessions", sessionsRouter);
 routes.use("/users", usersRouter);
 routes.use("/dishes", dishesRouter);
-routes.use("/carts", cartsRouter);
+routes.use("/cart", cartsRouter);
 routes.use("/orders", ordersRouter);
 routes.use("/favorites", usersFavoritesRouter);
 

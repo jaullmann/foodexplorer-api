@@ -41,6 +41,11 @@ class DishesController {
     async show(request, response) {
       const { dish_id } = request.params;
       const dish = await knex("dishes").where("dish_id", dish_id).first();
+
+      if (!dish) {
+        return response.status(201).json()
+      }
+
       const ingredients = await knex("ingredients")
         .select("name")
         .where({"dish_id": dish_id})

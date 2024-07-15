@@ -5,6 +5,7 @@ const uploadConfig = require("../configs/upload");
 const DishesController = require("../controllers/DishesController");
 const DishPictureController = require("../controllers/DishPictureController");
 const ensureAuthenticated = require("../middlewares/ensureAuthenticated");
+const verifyUserAuthorization = require("../middlewares/verifyUserAuthorization");
 
 const dishesRoutes = Router();
 const upload = multer(uploadConfig.MULTER);
@@ -14,11 +15,11 @@ const dishPictureController = new DishPictureController();
 
 dishesRoutes.use(ensureAuthenticated);
 
-dishesRoutes.get("/", dishesController.index);
-dishesRoutes.post("/", dishesController.create);
-dishesRoutes.get("/:dish_id", dishesController.show);
-dishesRoutes.put("/:dish_id", dishesController.update);
-dishesRoutes.delete("/:dish_id", dishesController.delete);
-dishesRoutes.patch("/image", upload.single("image"), dishPictureController.update);
+dishesRoutes.get("/", verifyUserAuthorization(["admin", "customer"]), dishesController.index);
+dishesRoutes.get("/:dish_id", verifyUserAuthorization(["admin", "customer"]),dishesController.show);
+dishesRoutes.post("/", verifyUserAuthorization(["admin"]), dishesController.create);
+dishesRoutes.put("/:dish_id", verifyUserAuthorization(["admin"]), dishesController.update);
+dishesRoutes.delete("/:dish_id", verifyUserAuthorization(["admin"]), dishesController.delete);
+dishesRoutes.patch("/image", upload.single("image"), verifyUserAuthorization(["admin"]), dishPictureController.update);
 
 module.exports = dishesRoutes;

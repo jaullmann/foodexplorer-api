@@ -27,10 +27,11 @@ class OrdersController {
     return response.status(201).json();
   }
 
-  async show(request, response) {    
+  async show(request, response) { 
+    const { order_id } = request.params;    
     const user_id = request.user.id;  
     const role = request.user.role
-    const { order_id } = request.params; 
+        
     let order = null; 
     
     if (role === "admin") {
@@ -53,10 +54,12 @@ class OrdersController {
     } 
 
     const orderDetails = await knex("orders_details as od")
-      .select("od.dish_id", "ds.title", "od.dish_amount", "od.dish_price_paid")     
+      .select("od.dish_id", "ds.title", "od.dish_amount", "od.dish_price_paid as dish_price", "ds.image_file")     
       .innerJoin("dishes as ds", "od.dish_id", "ds.dish_id") 
       .where("od.order_id", order_id)       
       .orderBy("ds.title")
+
+    console.log({...order, orderDetails})
 
     return response.status(201).json({
       ...order,

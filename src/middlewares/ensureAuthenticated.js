@@ -6,7 +6,7 @@ function ensureAuthenticated(request, response, next) {
   const authHeader = request.headers;
 
   if (!authHeader.cookie) {
-    throw new AppError('JWT token não informado', 401);
+    throw new AppError('JWT Token não informado', 401);
   }
 
   const [, token] = authHeader.cookie.split('token=');
@@ -21,7 +21,7 @@ function ensureAuthenticated(request, response, next) {
 
     return next();
   } catch {
-    throw new AppError('Invalid JWT token', 401);
+    throw new AppError('JWT Token inválido', 401);
   }
 }
 

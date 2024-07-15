@@ -5,7 +5,7 @@ exports.up = knex => knex.schema.createTable("orders", t => {
   t.enum('payment_method', ['pix', 'credito', 'debito'], { useNative: true, enumName: "payment_methods" })
     .notNullable().default('crédito');
 
-  t.enum('status', ['pendente', 'preparando', 'entregue', 'cancelado'], { useNative: true, enumName: "status" })
+  t.enum('status', ['aprovado', 'pendente', 'preparando', 'entregue', 'cancelado'], { useNative: true, enumName: "status" })
   .notNullable().default('pendente');
   t.timestamp("ordered_at").default(knex.fn.now());
   t.timestamp("updated_at").default(knex.fn.now());

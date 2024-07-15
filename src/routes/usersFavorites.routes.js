@@ -1,16 +1,18 @@
 const { Router } = require("express");
-const UserFavoritesController = require("../controllers/UsersFavoritesController");
+const UsersFavoritesController = require("../controllers/UsersFavoritesController");
 const ensureAuthenticated = require("../middlewares/ensureAuthenticated");
+const verifyUserAuthorization = require("../middlewares/verifyUserAuthorization");
 
 const usersFavoritesRoutes = Router();
 
-const userFavoritesController = new UserFavoritesController();
+const usersFavoritesController = new UsersFavoritesController();
 
 usersFavoritesRoutes.use(ensureAuthenticated);
+usersFavoritesRoutes.use(verifyUserAuthorization(["admin", "customer"]));
 
-usersFavoritesRoutes.get("/", userFavoritesController.show);
-usersFavoritesRoutes.post("/", userFavoritesController.create);
-usersFavoritesRoutes.put("/", userFavoritesController.update);
-usersFavoritesRoutes.delete("/", userFavoritesController.delete);
+usersFavoritesRoutes.get("/", usersFavoritesController.show);
+usersFavoritesRoutes.post("/", usersFavoritesController.create);
+usersFavoritesRoutes.put("/", usersFavoritesController.update);
+usersFavoritesRoutes.delete("/", usersFavoritesController.delete);
 
 module.exports = usersFavoritesRoutes;

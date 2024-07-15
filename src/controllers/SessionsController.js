@@ -24,19 +24,19 @@ class SessionsController {
 
     const token = sign({ role: user.role }, secret, {
       subject: String(user.user_id),
-      expiresIn
+      expiresIn: "24h"
     });
 
     response.cookie("token", token, {
       httpOnly: true,
       sameSite: "none",
       secure: true,
-      maxAge: 15 * 60 * 1000   
+      maxAge: 86400 * 1000   
     })
 
     delete user.password
 
-    response.status(201).json({ token, user });
+    response.status(201).json({ user });
   }
 }
 
