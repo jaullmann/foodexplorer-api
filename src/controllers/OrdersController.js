@@ -59,8 +59,6 @@ class OrdersController {
       .where("od.order_id", order_id)       
       .orderBy("ds.title")
 
-    console.log({...order, orderDetails})
-
     return response.status(201).json({
       ...order,
       "order_details": orderDetails

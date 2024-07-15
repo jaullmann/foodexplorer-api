@@ -49,8 +49,6 @@ class UsersCartsController {
 
       const usersCart = await usersCartQuery;
 
-      console.log(usersCart);
-
       return response.status(201).json(usersCart);
     }
        
