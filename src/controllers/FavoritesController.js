@@ -2,7 +2,7 @@ const knex = require("../database/knex");
 const AppError = require("../utils/AppError");
 
 
-class UsersFavoritesController {
+class FavoritesController {
 
     async create(request, response) {
         const { dish_id } = request.body;
@@ -58,7 +58,9 @@ class UsersFavoritesController {
     }    
 
     async delete(request, response) {
-      const { user_id, dish_id } = request.body;  
+      const { user_id, dish_id } = request.body;
+      console.log(user_id, dish_id)
+      console.log(request)
       
       await knex("users_favorites")
         .where("user_id", user_id)
@@ -70,4 +72,4 @@ class UsersFavoritesController {
 
 }
 
-module.exports = UsersFavoritesController;
+module.exports = FavoritesController;
