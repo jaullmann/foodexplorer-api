@@ -60,8 +60,6 @@ class FavoritesController {
     async delete(request, response) {
       const { dish_id } = request.body;
       const user_id = request.user.id; 
-      console.log(user_id, dish_id)
-      console.log(request)
       
       await knex("users_favorites")
         .where("user_id", user_id)

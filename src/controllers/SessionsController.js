@@ -26,13 +26,15 @@ class SessionsController {
       subject: String(user.user_id),
       expiresIn
     });
-
+ 
     response.cookie("token", token, {
       httpOnly: true,
       sameSite: "none",
       secure: true,
       maxAge: 86400 * 1000   
     });
+
+    console.log(response)
 
     delete user.password
 
