@@ -15,11 +15,11 @@ const dishPictureController = new DishPictureController();
 
 dishesRoutes.use(ensureAuthenticated);
 
-dishesRoutes.get("/", verifyUserAuthorization(["admin", "customer"]), dishesController.index);
-dishesRoutes.get("/:dish_id", verifyUserAuthorization(["admin", "customer"]),dishesController.show);
-dishesRoutes.post("/", verifyUserAuthorization(["admin"]), dishesController.create);
-dishesRoutes.put("/:dish_id", verifyUserAuthorization(["admin"]), dishesController.update);
-dishesRoutes.delete("/:dish_id", verifyUserAuthorization(["admin"]), dishesController.delete);
-dishesRoutes.patch("/image", upload.single("image"), verifyUserAuthorization(["admin"]), dishPictureController.update);
+dishesRoutes.get("/", dishesController.index);
+dishesRoutes.get("/:dish_id", dishesController.show);
+dishesRoutes.post("/", verifyUserAuthorization("admin"), dishesController.create);
+dishesRoutes.put("/:dish_id", verifyUserAuthorization("admin"), dishesController.update);
+dishesRoutes.delete("/:dish_id", verifyUserAuthorization("admin"), dishesController.delete);
+dishesRoutes.patch("/image", upload.single("image"), verifyUserAuthorization("admin"), dishPictureController.update);
 
 module.exports = dishesRoutes;

@@ -24,7 +24,7 @@ class SessionsController {
 
     const token = sign({ role: user.role }, secret, {
       subject: String(user.user_id),
-      expiresIn,
+      expiresIn
     });
 
     response.cookie("token", token, {

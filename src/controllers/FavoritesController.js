@@ -58,7 +58,8 @@ class FavoritesController {
     }    
 
     async delete(request, response) {
-      const { user_id, dish_id } = request.body;
+      const { dish_id } = request.body;
+      const user_id = request.user.id; 
       console.log(user_id, dish_id)
       console.log(request)
       
