@@ -34,12 +34,9 @@ class SessionsController {
       maxAge: 86400 * 1000   
     });
 
-    console.log(response)
-
     delete user.password
-
+    
     response.status(201).json({ user });
   }
 }
-
 module.exports = SessionsController;

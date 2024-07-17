@@ -11,6 +11,6 @@ favoritesRoutes.use(ensureAuthenticated);
 favoritesRoutes.get("/", favoritesController.show);
 favoritesRoutes.post("/", favoritesController.create);
 favoritesRoutes.put("/", favoritesController.update);
-favoritesRoutes.delete("/", favoritesController.delete);
+favoritesRoutes.delete("/:id", favoritesController.delete);
 
 module.exports = favoritesRoutes;
