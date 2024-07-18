@@ -13,15 +13,24 @@ class UsersCartsController {
             user_id,
             dish_id,
             dish_amount         
-          });                  
+          });            
           
         } catch (e) {
           if (e.code === 'SQLITE_CONSTRAINT') {
-            console.log('Dish already on user cart; dish_amount incremented');
+            console.log('Dish already on user cart; amount incremented');
+
+            const prevAmount = await knex("users_carts")
+              .select("dish_amount")
+              .where("user_id", user_id)
+              .andWhere("dish_id", dish_id)
+              .first()                          
+              
             await knex("users_carts")
               .where("user_id", user_id)
               .andWhere("dish_id", dish_id)
-              .update({ dish_amount });            
+              .update({ 
+                dish_amount: prevAmount.dish_amount + dish_amount 
+              });            
           } else {
             throw new AppError(e.message);
           }
