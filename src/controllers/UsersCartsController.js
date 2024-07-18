@@ -17,7 +17,7 @@ class UsersCartsController {
           
         } catch (e) {
           if (e.code === 'SQLITE_CONSTRAINT') {
-            console.error('UNIQUE constraint violation; dish_amount updated');
+            console.log('Dish already on user cart; dish_amount incremented');
             await knex("users_carts")
               .where("user_id", user_id)
               .andWhere("dish_id", dish_id)
