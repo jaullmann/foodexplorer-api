@@ -6,7 +6,7 @@ class UsersCartsController {
 
     async create(request, response) {
         const { dish_id, dish_amount } = request.body;
-        const user_id = request.user.id; 
+        const { user_id } = request.user; 
 
         try {
           await knex("users_carts").insert({
@@ -40,7 +40,7 @@ class UsersCartsController {
     } 
 
     async index(request, response) {
-      const { id, role } = request.user;
+      const { user_id, role } = request.user;
       
       let usersCartQuery = knex("users_carts as uc")
         .select("uc.user_id", "uc.dish_id", "uc.dish_amount", "ds.title", "ds.category", "ds.price as dish_price", "ds.image_file")
@@ -48,7 +48,7 @@ class UsersCartsController {
 
       if (role === 'customer') {
         usersCartQuery = usersCartQuery
-          .where("uc.user_id", id)
+          .where("uc.user_id", user_id)
           .orderBy("ds.title");
       } else {
         usersCartQuery = usersCartQuery
@@ -63,7 +63,7 @@ class UsersCartsController {
        
     async update(request, response) {
       const { dishes_id, dishes_amount } = request.body;
-      const user_id = request.user.id; 
+      const { user_id } = request.user; 
 
       await knex("users_carts").where("user_id", user_id).delete();
 
@@ -84,7 +84,7 @@ class UsersCartsController {
 
     async delete(request, response) {
       const { dish_id } = request.body;
-      const user_id = request.user.id;   
+      const { user_id } = request.user;   
       
       if (dish_id) {
         await knex("users_carts")
