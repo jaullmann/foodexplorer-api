@@ -59,16 +59,16 @@ class DishesController {
     }
 
     async index(request, response) {
-      const { search_key } = request.query;
+      const key = request.query?.search_key ?? "";
 
       const distinctDishes = await knex("dishes as ds")
         .distinct("ds.*")
         .innerJoin("ingredients as ig", "ds.dish_id", "ig.dish_id")
         .where(
           builder => {
-            builder.whereLike("ds.title", `%${search_key}%`)
-              .orWhereLike("ds.description", `%${search_key}%`)
-              .orWhereLike("ig.name", `%${search_key}%`)                            
+            builder.whereLike("ds.title", `%${key}%`)
+              .orWhereLike("ds.description", `%${key}%`)
+              .orWhereLike("ig.name", `%${key}%`)                            
             }
           )
         .whereNull("ds.removed_at")   // filter removed (deleted) dishes that are no longer available
