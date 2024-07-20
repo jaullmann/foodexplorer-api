@@ -15,7 +15,7 @@ function ensureAuthenticated(request, response, next) {
     const { role, sub: user_id } = verify(token, authConfig.jwt.secret);
 
     request.user = {
-      id: Number(user_id),
+      user_id: Number(user_id),
       role
     };
 

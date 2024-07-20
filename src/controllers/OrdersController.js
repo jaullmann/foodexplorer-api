@@ -6,7 +6,7 @@ class OrdersController {
 
   async create(request, response) {
     const { payment_method, ordered_dishes } = request.body; 
-    const user_id = request.user.id; 
+    const { user_id } = request.user; 
 
     const [ order_id ] = await knex("orders").insert({
       user_id,
@@ -28,17 +28,19 @@ class OrdersController {
   }
 
   async show(request, response) { 
-    const { order_id } = request.params;    
-    const user_id = request.user.id;  
-    const role = request.user.role
-        
+    const { order_id } = request.params;
+    const { user_id, role } = request.user;      
+    
+    if (!order_id) {
+      return response.status(201).json()
+    }
+
     let order = null; 
     
     if (role === "admin") {
       order = await knex("orders")              
         .where("order_id", order_id)
-        .first()
-        
+        .first()        
       if (!order) {
         return response.status(201).json()
       }
@@ -66,8 +68,8 @@ class OrdersController {
   }
 
   async index(request, response) {
-    const user_id = request.user.id; 
-    const role = request.user.role; 
+    const { user_id, role } = request.user; 
+
     let orders = null;
     let ordersDetails = null;
 

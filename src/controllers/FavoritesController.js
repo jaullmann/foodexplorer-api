@@ -6,7 +6,7 @@ class FavoritesController {
 
     async create(request, response) {
         const { dish_id } = request.body;
-        const user_id = request.user.id; 
+        const { user_id } = request.user; 
 
         try {
           await knex("users_favorites").insert({
@@ -26,7 +26,7 @@ class FavoritesController {
     } 
 
     async show(request, response) {
-      const user_id = request.user.id; 
+      const { user_id } = request.user; 
       
       const usersFavorites = await knex("users_favorites as uf")
         .select("uf.user_id", "uf.dish_id", "ds.title", "ds.category", "ds.image_file")
@@ -39,7 +39,7 @@ class FavoritesController {
        
     async update(request, response) {
       const { dishes_id } = request.body;
-      const user_id = request.user.id; 
+      const { user_id } = request.user; 
 
       await knex("users_favorites").where("user_id", user_id).delete();
 
@@ -58,7 +58,8 @@ class FavoritesController {
     }    
 
     async delete(request, response) {
-      const { user_id, dish_id } = request.body;      
+      const { dish_id } = request.body; 
+      const { user_id } = request.user;      
       
       await knex("users_favorites")
         .where("user_id", user_id)
