@@ -11,7 +11,7 @@ class OrdersController {
     const [ order_id ] = await knex("orders").insert({
       user_id,
       payment_method
-    })
+    })    
 
     const orderDishesInsert = ordered_dishes.map(orderedDish => {
       return {
@@ -24,7 +24,7 @@ class OrdersController {
 
     await knex("orders_details").insert(orderDishesInsert);
 
-    return response.status(201).json();
+    return response.status(201).json({ order_id });
   }
 
   async show(request, response) { 
@@ -56,7 +56,7 @@ class OrdersController {
     } 
 
     const orderDetails = await knex("orders_details as od")
-      .select("od.dish_id", "ds.title", "od.dish_amount", "od.dish_price_paid as dish_price", "ds.image_file")     
+      .select("od.dish_id", "ds.title", "od.dish_amount", "od.dish_price_paid as dish_price", "ds.image_file")      
       .innerJoin("dishes as ds", "od.dish_id", "ds.dish_id") 
       .where("od.order_id", order_id)       
       .orderBy("ds.title")
