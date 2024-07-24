@@ -15,9 +15,7 @@ class FavoritesController {
           });                  
           
         } catch (e) {
-          if (e.code === 'SQLITE_CONSTRAINT') {
-            console.error('UNIQUE constraint violation; create request ignored');
-          } else {
+          if (e.code !== 'SQLITE_CONSTRAINT') {
             throw new AppError(e.message);
           }
         }        
