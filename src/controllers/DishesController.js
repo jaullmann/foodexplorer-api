@@ -17,7 +17,7 @@ class DishesController {
         if (checkDishExists) {
           throw new AppError("Já existe outro prato registrado com este nome.");
         }
-
+        
         const [ dish_id ] = await knex("dishes").insert({
           title,
           category,
@@ -35,7 +35,7 @@ class DishesController {
           await knex("ingredients").insert(ingredientsInsert);
         }
         
-        return response.status(201).json();
+        return response.status(201).json({ dish_id });
     } 
 
     async show(request, response) {

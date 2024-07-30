@@ -3,9 +3,9 @@ const AppError = require("../utils/AppError");
 const DiskStorage = require("../providers/DiskStorage");
 
 class DishPictureController {
-    async update(request, response) {
+    async update(request, response) {            
         const { role } = request.user;
-        const { dish_id } = request.query;
+        const { dish_id } = request.params;
         const pictureFilename = request.file.filename;
 
         const diskStorage = new DiskStorage();
