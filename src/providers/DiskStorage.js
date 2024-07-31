@@ -22,10 +22,11 @@ class diskStorage {
 
   async deleteFile(file) {
     const filePath = path.resolve(uploadConfig.UPLOADS_FOLDER, file);
-
+    
     try {
       await fs.promises.stat(filePath);
-    } catch {
+    } catch(e) {
+      console.log(e)
       return;
     }
     

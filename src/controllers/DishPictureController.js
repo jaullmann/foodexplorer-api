@@ -31,6 +31,21 @@ class DishPictureController {
 
         return response.status(201).json(dish);
     }
+
+    async delete(request, response) {
+        const { role } = request.user;
+        const { image_file } = request.body;
+
+        if (role !== 'admin') {
+            throw new AppError("Unauthorized", 401);
+        }
+
+        const diskStorage = new DiskStorage(); 
+
+        await diskStorage.deleteFile(image_file);
+
+        return response.status(201).json();
+    }
 }
 
 module.exports = DishPictureController;

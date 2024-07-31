@@ -134,14 +134,14 @@ class DishesController {
       
       const ordersWithDish = await knex("orders_details").where("dish_id", dish_id).first();     
 
-      // check if there is any previous order with the target dish; in this case, the dish is not deleted to preserve the correct
+      // check if there is any previous order with the target dish; in this case, the dish won't be deleted to preserve the correct
       // detail from its linked orders
       if (ordersWithDish) {
         await knex("dishes")
           .where("dish_id", dish_id)
           .update({ removed_at: knex.fn.now() });
       } else {
-        // if the dish has never been sold, then the delete procedure is performed
+        // if the dish has never been sold, then the delete procedure is fully performed
         await knex("dishes").where("dish_id", dish_id).delete();
       }     
 
