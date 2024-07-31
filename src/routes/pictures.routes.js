@@ -6,14 +6,14 @@ const DishPictureController = require("../controllers/DishPictureController");
 const ensureAuthenticated = require("../middlewares/ensureAuthenticated");
 const verifyUserAuthorization = require("../middlewares/verifyUserAuthorization");
 
-const dishesRoutes = Router();
+const picturesRoutes = Router();
 const upload = multer(uploadConfig.MULTER);
 
 const dishPictureController = new DishPictureController();
 
-dishesRoutes.use(ensureAuthenticated);
+picturesRoutes.use(ensureAuthenticated);
 
-dishesRoutes.patch("/:dish_id", upload.single("image"), verifyUserAuthorization("admin"), dishPictureController.update);
-dishesRoutes.delete("/", verifyUserAuthorization("admin"), dishPictureController.delete);
+picturesRoutes.patch("/:dish_id", upload.single("image"), verifyUserAuthorization("admin"), dishPictureController.update);
+picturesRoutes.delete("/", verifyUserAuthorization("admin"), dishPictureController.delete);
 
-module.exports = dishesRoutes;
+module.exports = picturesRoutes;
