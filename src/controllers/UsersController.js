@@ -8,6 +8,7 @@ class UsersController {
   async create(request, response) {
     const { name, email, password } = request.body;
 
+    const hashedPassword = await hash(password, 8);
     const checkFirstUser = await knex("users");
     
     // by default, the first user will be created as administrator
@@ -21,9 +22,7 @@ class UsersController {
     if (checkUserExists.length > 0) {
       throw new AppError("Este e-mail já está cadastrado.");
     }
-
-    const hashedPassword = await hash(password, 8);
-
+    
     await knex("users").insert({ name, email, password: hashedPassword });
 
     return response.status(201).json();
