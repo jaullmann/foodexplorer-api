@@ -10,7 +10,9 @@ class OrdersController {
 
     const [ order_id ] = await knex("orders").insert({
       user_id,
-      payment_method
+      payment_method,
+      ordered_at: knex.fn.now(),
+      updated_at: knex.fn.now()
     })    
 
     const orderDishesInsert = ordered_dishes.map(orderedDish => {
@@ -108,7 +110,7 @@ class OrdersController {
     const { payment_method, ordered_dishes } = request.body;
     const { order_id } = request.params;
     const { role } = request.user;
-
+   
     if (role !== 'admin') {
       throw new AppError("Unauthorized", 401);
     }

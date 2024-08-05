@@ -1,7 +1,6 @@
 require("express-async-errors");
 const migrationsRun = require('./database/sqlite/migrations')
 
-const database = require("./database/sqlite");
 const cors = require("cors");
 const express = require("express");
 const routes = require("./routes");
