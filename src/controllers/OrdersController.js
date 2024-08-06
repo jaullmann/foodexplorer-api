@@ -107,7 +107,7 @@ class OrdersController {
   }
 
   async update(request, response) {
-    const { payment_method, ordered_dishes } = request.body;
+    const { status } = request.body;
     const { order_id } = request.params;
     const { role } = request.user;
    
@@ -118,24 +118,9 @@ class OrdersController {
     await knex("orders")
       .where("order_id", order_id)
       .update({
-        payment_method,
+        status,
         updated_at: knex.fn.now()
-      });
-
-    if (ordered_dishes) {
-      await knex("orders_details").where("order_id", order_id).delete();
-
-      const orderDetailsInsert = ordered_dishes.map(orderDetail => {
-        return {
-          order_id: order_id,
-          dish_id: orderDetail.dish_id,
-          dish_amount: orderDetail.dish_amount,
-          dish_price_paid: orderDetail.dish_price_paid
-        }
-      });
-
-      await knex("orders_details").insert(orderDetailsInsert);
-    }
+      });   
      
     return response.status(201).json();
   }

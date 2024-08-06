@@ -12,7 +12,7 @@ ordersRoutes.use(ensureAuthenticated);
 ordersRoutes.get("/", ordersController.index);
 ordersRoutes.post("/", ordersController.create);
 ordersRoutes.get("/:order_id", ordersController.show);
-ordersRoutes.put("/:order_id", verifyUserAuthorization("admin"), ordersController.update);
+ordersRoutes.patch("/:order_id", verifyUserAuthorization("admin"), ordersController.update);
 ordersRoutes.delete("/:order_id", verifyUserAuthorization("admin"), ordersController.delete);
 
 module.exports = ordersRoutes;
