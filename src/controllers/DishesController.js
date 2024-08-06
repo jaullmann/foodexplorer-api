@@ -60,32 +60,42 @@ class DishesController {
 
     async index(request, response) {
       const key = request.query?.search_key ?? "";
+      const words = key.split(/\s+/); 
 
-      const distinctDishes = await knex("dishes as ds")
-        .distinct("ds.*")
-        .innerJoin("ingredients as ig", "ds.dish_id", "ig.dish_id")
-        .where(
-          builder => {
-            builder.whereLike("ds.title", `%${key}%`)
-              .orWhereLike("ds.description", `%${key}%`)
-              .orWhereLike("ig.name", `%${key}%`)                            
-            }
-          )
-        .whereNull("ds.removed_at")   // filter removed (deleted) dishes that are no longer available
-        .orderBy("ds.title")
-        .groupBy("ds.dish_id") 
-        .select("ds.*");   
+      let dishes = [];
+      const dishIds = new Set();
+    
+      for (const word of words) {
+        const results = await knex("dishes as ds")
+          .distinct("ds.*")
+          .innerJoin("ingredients as ig", "ds.dish_id", "ig.dish_id")
+          .where(builder => {
+            builder.whereLike("ds.title", `%${word}%`)
+              .orWhereLike("ds.description", `%${word}%`)
+              .orWhereLike("ig.name", `%${word}%`);
+          })
+          .whereNull("ds.removed_at") // filter applied not to return dishes that have already been removed
+          .orderBy("ds.title")
+          .groupBy("ds.dish_id")
+          .select("ds.*");
+    
+        results.forEach(dish => {
+          if (!dishIds.has(dish.dish_id)) {
+            dishIds.add(dish.dish_id);
+            dishes.push(dish);
+          }
+        });
+      }
       
-      const dishesWithIngredients = await Promise.all(distinctDishes.map(async dish => {
+      const dishesWithIngredients = await Promise.all(dishes.map(async dish => {
         const ingredients = await knex("ingredients")
           .select("name")
           .where("dish_id", dish.dish_id)
-          .pluck("name"); 
-        
+          .pluck("name");
+    
         return { ...dish, ingredients };
-        })        
-      );
-     
+      }));
+    
       return response.status(201).json(dishesWithIngredients);
     }
        
