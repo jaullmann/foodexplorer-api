@@ -70,9 +70,9 @@ class DishesController {
           .distinct("ds.*")
           .innerJoin("ingredients as ig", "ds.dish_id", "ig.dish_id")
           .where(builder => {
-            builder.whereLike("ds.title", `%${word}%`)
-              .orWhereLike("ds.description", `%${word}%`)
-              .orWhereLike("ig.name", `%${word}%`);
+            builder.whereLike("ds.title", `%${word.toLowerCase()}%`)
+              .orWhereLike("ds.description", `%${word.toLowerCase()}%`)
+              .orWhereLike("ig.name", `%${word.toLowerCase()}%`);
           })
           .whereNull("ds.removed_at") // filter applied not to return dishes that have already been removed
           .orderBy("ds.title")
