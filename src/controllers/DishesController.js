@@ -74,7 +74,7 @@ class DishesController {
               .orWhereLike("ds.description", `%${word.toLowerCase()}%`)
               .orWhereLike("ig.name", `%${word.toLowerCase()}%`);
           })
-          .whereNull("ds.removed_at") // filter applied not to return dishes that have already been removed
+          .whereNull("ds.removed_at") // filter applied to prevent returning dishes that have already been removed
           .orderBy("ds.title")
           .groupBy("ds.dish_id")
           .select("ds.*");
@@ -95,7 +95,7 @@ class DishesController {
     
         return { ...dish, ingredients };
       }));
-    
+      
       return response.status(201).json(dishesWithIngredients);
     }
        
