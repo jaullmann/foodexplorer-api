@@ -100,7 +100,7 @@ class DishesController {
     }
        
     async update(request, response) {
-      const { title, category, description, ingredients, price } = request.body;
+      const { title, category, description, ingredients, price, image_file } = request.body;
       const { dish_id } = request.params;
       const { role } = request.user;
 
@@ -115,7 +115,8 @@ class DishesController {
           category, 
           description, 
           price,
-          updated_at: knex.fn.now()
+          updated_at: knex.fn.now(),
+          image_file
       });
 
       await knex("ingredients").where("dish_id", dish_id).delete();
