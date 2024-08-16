@@ -18,7 +18,7 @@ class DishPictureController {
             throw new AppError("Unauthorized", 401);
         }
 
-        if (dish.image_file) {
+        if (dish.image_file && dish.image_file !== "") {
             await diskStorage.deleteFile(dish.image_file);
         }
 

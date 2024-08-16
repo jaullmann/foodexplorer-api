@@ -107,7 +107,7 @@ class DishesController {
       if (role !== 'admin') {
         throw new AppError("Unauthorized", 401);
       }     
-      
+            
       await knex("dishes")
         .where("dish_id", dish_id)
         .update({
