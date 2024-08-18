@@ -61,33 +61,44 @@ class DishesController {
     async index(request, response) {
       const key = request.query?.search_key ?? "";
       const words = key.split(/\s+/); 
-
+    
       let dishes = [];
       const dishIds = new Set();
     
-      for (const word of words) {
-        if (word.length < 3) continue;
-        const results = await knex("dishes as ds")
+      if (key === "" || !key) {
+        dishes = await knex("dishes as ds")
           .distinct("ds.*")
           .innerJoin("ingredients as ig", "ds.dish_id", "ig.dish_id")
-          .where(builder => {
-            builder.whereLike("ds.title", `%${word.toLowerCase()}%`)
-              .orWhereLike("ds.description", `%${word.toLowerCase()}%`)
-              .orWhereLike("ig.name", `%${word.toLowerCase()}%`);
-          })
           .whereNull("ds.removed_at") // filter applied to prevent returning dishes that have already been removed
           .orderBy("ds.title")
           .groupBy("ds.dish_id")
           .select("ds.*");
     
-        results.forEach(dish => {
-          if (!dishIds.has(dish.dish_id)) {
-            dishIds.add(dish.dish_id);
-            dishes.push(dish);
-          }
-        });
+      } else {        
+        for (const word of words) {
+          if (word.length < 3) continue;
+          const results = await knex("dishes as ds")
+            .distinct("ds.*")
+            .innerJoin("ingredients as ig", "ds.dish_id", "ig.dish_id")
+            .where(builder => {
+              builder.whereLike("ds.title", `%${word.toLowerCase()}%`)
+                .orWhereLike("ds.description", `%${word.toLowerCase()}%`)
+                .orWhereLike("ig.name", `%${word.toLowerCase()}%`);
+            })
+            .whereNull("ds.removed_at") // filter applied to prevent returning dishes that have already been removed
+            .orderBy("ds.title")
+            .groupBy("ds.dish_id")
+            .select("ds.*");
+    
+          results.forEach(dish => {
+            if (!dishIds.has(dish.dish_id)) {
+              dishIds.add(dish.dish_id);
+              dishes.push(dish);
+            }
+          });
+        }
       }
-      
+    
       const dishesWithIngredients = await Promise.all(dishes.map(async dish => {
         const ingredients = await knex("ingredients")
           .select("name")
@@ -96,7 +107,7 @@ class DishesController {
                 
         return { ...dish, ingredients };
       }));      
-      
+    
       return response.status(201).json(dishesWithIngredients);
     }
        
