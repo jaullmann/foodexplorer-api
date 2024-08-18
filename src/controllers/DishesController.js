@@ -66,6 +66,7 @@ class DishesController {
       const dishIds = new Set();
     
       for (const word of words) {
+        if (word.length < 3) continue;
         const results = await knex("dishes as ds")
           .distinct("ds.*")
           .innerJoin("ingredients as ig", "ds.dish_id", "ig.dish_id")
