@@ -1,5 +1,6 @@
 require("express-async-errors");
-const migrationsRun = require('./database/sqlite/migrations')
+require("dotenv");
+const migrationsRun = require('./database/sqlite/migrations');
 
 const cors = require("cors");
 const express = require("express");
@@ -8,7 +9,7 @@ const cookieParser = require("cookie-parser");
 const uploadConfig = require("./configs/upload");
 const AppError = require("./utils/AppError");
 
-migrationsRun()
+migrationsRun();
 
 const app = express();
 app.use(express.json());
