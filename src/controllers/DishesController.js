@@ -92,9 +92,9 @@ class DishesController {
           .select("name")
           .where("dish_id", dish.dish_id)
           .pluck("name");
-    
+                
         return { ...dish, ingredients };
-      }));
+      }));      
       
       return response.status(201).json(dishesWithIngredients);
     }
