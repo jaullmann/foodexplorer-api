@@ -15,6 +15,8 @@ const app = express();
 app.use(express.json());
 app.use("/files", express.static(uploadConfig.UPLOADS_FOLDER));
 app.use(cookieParser());
+
+// definição de origens permitidas para execução do front-end
 app.use(cors({       
   origin: [
     "http://localhost:5173", 
@@ -22,7 +24,8 @@ app.use(cors({
     "https://foodexplorer2024.netlify.app"
   ],
   credentials: true
-}));    
+})); 
+// definição de origens permitidas para execução do front-end   
 
 app.use(routes);
 
