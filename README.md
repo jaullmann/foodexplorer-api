@@ -22,6 +22,10 @@
     os arquivos que eventualmente estejam salvos nesse local.</li>
 </ol>
 
+<p>O esquema visual do banco de dados pode ser encontrado no arquivo "docs/database schema.jpg"</p>
+
 <p>Link da aplicação online: <b>https://foodexplorer2024.netlify.app/</b></p>
 <p>Usuário de teste: <b>user@email.com</b> - usuário admin: <b>admin@email.com</b></p>
-<p>Senha: 1234</p>
+<p>Senha: 1234 (ambos os casos)</p>
+
+<p>Autor: Jorge Alencar Ullmann - jaullmann@gmail.com</p>
