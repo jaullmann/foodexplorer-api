@@ -19,7 +19,7 @@
   <li>Suspender a execução da API (ctrl + C), e rodar na sequência o comando "npm run migrate:latest", para geração de todas as tabelas necessárias dentro do banco de dados criado na etapa anterior;</li>
   <li>No arquivo "src/server.js", entre as linhas 19-28, definir os endereçcos https ou http de origem permitidos para executar a aplicação front-end (endereço local ou online), e a porta, se necessário;</li>
   <li>Todos os arquivos de imagens de produtos *.png e *.jpg são gravados na pasta "tmp/uploads". Caso esteja recriando o banco de dados, acessar o diretório da imagem e fazer a exclusão manual de todos 
-    os arquivos que eventualmente estejam eventualmente gravados nesse local.</li>
+    os arquivos que eventualmente estejam salvos nesse local.</li>
 </ol>
 
 <p>Link da aplicação online: <b>https://foodexplorer2024.netlify.app/</b></p>
