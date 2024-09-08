@@ -6,7 +6,7 @@ function ensureAuthenticated(request, response, next) {
   const authHeader = request.headers;
 
   if (!authHeader.cookie) {    
-    throw new AppError('JWT Token não informado', 401);
+    throw new AppError('Sessão expirada, faça login novamente.', 401);
   }
 
   const [, token] = authHeader.cookie.split('token=');
