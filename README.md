@@ -29,4 +29,6 @@
 <p>Usuário de teste: <b>user@email.com</b> - usuário admin: <b>admin@email.com <br>Senha: 1234 (ambos os casos)</p>
 <p>Obs.: a aplicação poderá sofrer um atraso na inicialização ao primeiro acesso, devido ao tipo de plano utilizado para hospedagem do serviço ser gratuito.</p>
 
+<p>Página da aplicação front-end (WEB): https://github.com/jaullmann/foodexplorer-web</p>
+
 <p>Autor: Jorge Alencar Ullmann - jaullmann@gmail.com</p>
