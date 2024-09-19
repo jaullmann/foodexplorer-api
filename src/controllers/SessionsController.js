@@ -31,7 +31,7 @@ class SessionsController {
       httpOnly: true,
       sameSite: "none",
       secure: true,
-      maxAge: 86400   
+      maxAge: 86400 * 1000  
     });
 
     delete user.password
