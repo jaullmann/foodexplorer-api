@@ -1,6 +1,6 @@
 ![image](https://github.com/user-attachments/assets/94b52da4-73db-431b-849a-d9c8852fe34c)
 
-<h1>Food Explorer - Rest API (Front-end)</h1>
+<h1>Food Explorer - Rest API (Backend)</h1>
 
 <p>Aplicação backend (API) de projeto de site de e-commerce, desenvolvido em ReactJS para conclusão do curso Explorer da Rocketseat.</p>
 
